@@ -1,0 +1,28 @@
+<launch>
+    <!-- usb_cam -->
+    <!-- <node pkg="usb_cam" type="usb_cam_node" name="usb_cam"/> -->
+    <!-- rplidar -->
+    <include file="$(find rplidar_ros)/launch/rplidar.launch"/>
+
+    <!-- cartographer -->
+    <include file="$(find cartographer_ros)/launch/cartographer.launch"/>
+
+    <!-- mapサーバー -->
+    <arg name="map_file" default="$(find motor_driver)/map/0515.yaml"/>　<!--マップファイルのパスの指定 -->
+    <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)" />
+
+    <!-- motor_driver -->
+    <node pkg="motor_driver" type="motor_driver.py" name="motor_driver" output="screen" />
+
+    <!-- move base -->
+    <node pkg="move_base" type="move_base" respawn="false" name="move_base" >
+        <rosparam file="$(find motor_control)/params/move_base_params.yaml" command="load" />
+        <rosparam file="$(find motor_control)/params/base_local_planner_params.yaml" command="load" />
+        <rosparam file="$(find motor_control)/params/costmap_common_params.yaml" command="load" ns="global_costmap" />
+        <rosparam file="$(find motor_control)/params/costmap_common_params.yaml" command="load" ns="local_costmap" />
+        <rosparam file="$(find motor_control)/params/local_costmap_params.yaml" command="load" />
+        <rosparam file="$(find motor_control)/params/global_costmap_params.yaml" command="load" />
+    </node>
+</launch>
+
+    
