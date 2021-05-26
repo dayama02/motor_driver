@@ -4,11 +4,62 @@ Cartographerによる2D Navigaionを行うロボットの製作
 
 ## 構成
 
-## Cartographer のインストール
+### Launchファイル
+ROSノードをまとめて起動するファイル
+
+#### map_create.launch
+手動操縦によるマップの作成用
+
+- usb_cam_node
+  - webカメラの表示だけ。不要ならコメントアウト
+- rplidar
+  - RPLiDARからのデータ取得とトピック配信を行うノード。
+- cartographer_ros
+  - lidarの情報をもとにSLAMを行うノード
+- motor_driver
+  - cmd_velを受けてarduinoへモーター速度指令を送るノード。ここだけ自作
+
+
+#### move_base.launch
+事前に作成したマップを使用する自動走行用
+
+- usb_cam_node
+  - webカメラの表示だけ。不要ならコメントアウト
+- rplidar
+  - RPLiDARからのデータ取得とトピック配信を行うノード。
+- cartographer_ros
+  - lidarの情報をもとにSLAMを行うノード
+- move_base
+  - マップと自己位置を元に行動計画と速度指令を送るノード。パラメータは少し調整した
+- motor_driver
+  - cmd_velを受けてarduinoへモーター速度指令を送るノード。ここだけ自作
+
+
+## 環境構築
+### RPLiDAR のインストール
+[ここ](https://github.com/Slamtec/rplidar_ros)からクローンしてビルド
+(ソースを取ってこなくても、aptでパッケージをインストールできるかも？)
+```
+cd ~/catkin_ws/src
+git clone https://github.com/Slamtec/rplidar_ros.git
+cd rplidar
+catkin build --this # もしくはcatkin_make
+
+```
+### Cartographer のインストール
 - [Compiling Cartographer ROS](https://google-cartographer-ros.readthedocs.io/en/latest/compilation.html#system-requirements)
 
+- [RaspberryでROSのCartographerを使用してVNCでホストコンピューターからrviz見たくてめちゃくちゃハマった人（人）](https://qiita.com/ink_off/items/11ca70f411206f4e7aa6)
 
-## OSインストール
+
+### move_base のインストール
+```
+sudo apt-get install -y ros-melodic-move-base
+```
+[ROS講座92 move_baseで移動する](https://qiita.com/srs/items/8e65f04976abb837d207) 
+ROS全般はこのサイトが詳しいので、困ったら該当する記事を参考にする。というか検索すると必ずこのサイトにたどり着く
+
+### OSインストール
 ROSインストール済のUbuntuイメージを入手してSDカードに焼く
 b8:27:eb:8a:30:a7
 - [Raspberry Pi 3B+用Ubuntu 18.04+ROSイメージ](https://b.ueda.tech/?post=20190618_raspimouse)
